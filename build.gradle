@@ -1,0 +1,103 @@
+plugins {
+
+    id 'java'
+
+    id 'org.springframework.boot' version '3.3.5'
+
+    id 'io.spring.dependency-management' version '1.1.6'
+
+}
+
+
+
+group = 'io.github.qrex404found'
+
+version = '0.0.1-SNAPSHOT'
+
+
+
+java {
+
+    toolchain {
+
+        languageVersion = JavaLanguageVersion.of(21)
+
+    }
+
+}
+
+
+
+repositories {
+
+    mavenCentral()
+
+    maven { url 'https://repo.spring.io/milestone' }
+
+    maven { url 'https://repo.spring.io/snapshot' }
+
+}
+
+
+
+ext {
+
+// ✅ 최신 기능(ChatClient, Options)이 모두 있는 버전으로 복귀
+
+    set('springAiVersion', "1.1.0-M4")
+
+}
+
+
+
+dependencies {
+
+
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+
+
+// ✅ Google GenAI 공식 스타터
+
+    implementation 'org.springframework.ai:spring-ai-starter-model-google-genai'
+
+
+
+    compileOnly 'org.projectlombok:lombok'
+
+    annotationProcessor 'org.projectlombok:lombok'
+
+
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
+
+// ✅ [추가] Swagger (OpenAPI) 라이브러리
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+
+}
+
+
+
+dependencyManagement {
+
+    imports {
+
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+
+    }
+
+}
+
+
+
+tasks.named('test') {
+
+    useJUnitPlatform()
+
+}

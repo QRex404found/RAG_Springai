@@ -1,0 +1,107 @@
+# 검증된 화이트리스트 도메인 (2025년 11월 기준)
+
+## 금융기관 - 은행
+- kbstar.com (KB국민은행)
+- shinhan.com (신한은행)
+- wooribank.com (우리은행)
+- wooriwon.com (우리WON)
+- hanabank.com (하나은행)
+- nonghyup.com (NH농협은행)
+- ibk.co.kr (IBK기업은행)
+- kakaobank.com (카카오뱅크)
+- tossbank.com (토스뱅크)
+- kbanknow.com (케이뱅크)
+- sc.co.kr (SC제일은행)
+- citibank.co.kr (한국씨티은행)
+- suhyup-bank.com (수협은행)
+- kfcc.co.kr (MG새마을금고)
+
+## 금융기관 - 카드
+- samsungcard.com (삼성카드)
+- shinhancard.com (신한카드)
+- hyundaicard.com (현대카드)
+- kbcard.com (KB국민카드)
+- lottecard.co.kr (롯데카드)
+- hanacard.co.kr (하나카드)
+- wooricard.com (우리카드)
+- bccard.com (BC카드)
+
+## 금융기관 - 증권
+- miraeasset.com (미래에셋증권)
+- truefriend.com (한국투자증권)
+- samsungpop.com (삼성증권)
+- nhqv.com (NH투자증권)
+- kiwoom.com (키움증권)
+
+## 정부 및 공공기관
+- gov.kr (정부24)
+- korea.go.kr (대한민국 정부)
+- mois.go.kr (행정안전부)
+- police.go.kr (경찰청)
+- spo.go.kr (검찰청)
+- scourt.go.kr (법원)
+- nts.go.kr (국세청 홈택스)
+- nhis.or.kr (국민건강보험공단)
+- nps.or.kr (국민연금공단)
+- moel.go.kr (고용노동부)
+- kcomwel.or.kr (근로복지공단)
+- 1350.moel.go.kr (고용노동부 고객센터)
+- epost.go.kr (우체국)
+- boho.or.kr (KISA 보호나라)
+- 112.go.kr (112 신고 포털)
+
+## 포털 및 IT 서비스
+- naver.com (네이버)
+- nid.naver.com (네이버 로그인)
+- kakao.com (카카오)
+- daum.net (다음)
+- nate.com (네이트)
+- mail.google.com (Gmail)
+- live.com (MS 계정)
+- apple.com (애플)
+- linkedin.com (링크드인)
+
+## 통신사
+- sktelecom.com (SKT)
+- tworld.co.kr (T월드)
+- kt.com (KT)
+- lguplus.com (LGU+)
+
+## 유통
+- cu.co.kr (CU)
+- gs25.com (GS25)
+
+---
+
+## 화이트리스트 적용 규칙
+
+### 1. 정확한 도메인 일치
+- SAFE: 위 목록과 정확히 일치하는 도메인
+- DANGEROUS: 타이포스쿼팅 변형 (예: naverr.com, kakaoo.com, kbstar-event.com)
+
+### 2. 서브도메인 처리
+- 알려진 서브도메인 (예: nid.naver.com, mail.google.com, tworld.co.kr): SAFE
+- 의심스러운 서브도메인 (예: login-verify.naver.com, security-alert.kakao.com): SUSPICIOUS 이상
+- 복잡한 서브도메인 (예: abc-def-ghi.naver.com): DANGEROUS
+
+### 3. 프로토콜 및 경로 검증
+- HTTPS 사용 권장, HTTP 사용 시 주의 필요
+- 비정상적인 경로 (예: /verify-account-urgent/): 추가 검증 필요
+
+### 4. 하이픈(-) 및 숫자 사용 주의
+- 공식 도메인에 없는 하이픈이나 숫자 추가: 타이포스쿼팅 의심
+- 예: kb-star.com, kbstar2.com → DANGEROUS
+
+### 5. 최종 판단 우선순위
+1. 블랙리스트 매칭 → 즉시 DANGEROUS
+2. 화이트리스트 정확 매칭 → 기본 SAFE (단, 서브도메인/경로 재검토)
+3. 타이포스쿼팅 패턴 → DANGEROUS
+4. 의심 패턴 감지 → SUSPICIOUS
+5. 알 수 없는 도메인 + 위험 패턴 → DANGEROUS
+
+---
+
+## 검증 정보 (참고용)
+- 모든 도메인은 VirusTotal Clean 판정 (악성 탐지 0~1건)
+- Web Archive에 장기간 운영 이력 확인됨 (1996년~2017년부터)
+- 신뢰도 높은 Alexa 랭킹 보유 또는 공식 기관
