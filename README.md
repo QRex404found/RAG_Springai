@@ -3,9 +3,9 @@
 ## 📖 1. 프로젝트 개요 (Overview)
 
 **QRex RAG Server**는 지능화되는 QR싱(Qhishing) 및 URL 피싱 위협에 대응하기 위해 설계된 **AI 전용 백엔드 서버**입니다.
-기존의 단순 규칙 기반 차단을 넘어, **LLM(Large Language Model)**의 추론 능력과 **RAG(Retrieval-Augmented Generation)** 기술을 결합하여 알려지지 않은 위협(Zero-day)까지 탐지하는 것을 목표로 합니다.
+기존의 단순 규칙 기반 차단을 넘어, **LLM(Large Language Model)** 의 추론 능력과 **RAG(Retrieval-Augmented Generation)** 기술을 결합하여 알려지지 않은 위협(Zero-day)까지 탐지하는 것을 목표로 합니다.
 
-특히, **Chroma DB(Vector Database)**를 도입하여 방대한 보안 지식 데이터를 벡터화하고, 의미 기반의 고성능 검색(Semantic Search)을 구현했습니다.
+특히, **Chroma DB(Vector Database)** 를 도입하여 방대한 보안 지식 데이터를 벡터화하고, 의미 기반의 고성능 검색(Semantic Search)을 구현했습니다.
 
 ---
 
