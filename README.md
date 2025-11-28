@@ -23,7 +23,7 @@
 
 ### 2.3 AI Agent & Function Calling
 단순한 챗봇이 아닌, 실제 시스템을 제어하는 **행동하는 에이전트(Agent)**를 구현했습니다.
-- AI가 사용자의 자연어(예: "방금 쓴 글 지워줘")를 이해하고, 스스로 판단하여 `deletePostById`와 같은 **Java 함수(Method)를 실행 **합니다.
+- AI가 사용자의 자연어(예: "방금 쓴 글 지워줘")를 이해하고, 스스로 판단하여 `deletePostById`와 같은 **Java 함수(Method)** 를 실행합니다.
 
 ---
 
@@ -77,7 +77,7 @@ graph LR
   - `ip_location` (String): 클라이언트 IP 위치 정보
 - **Internal Logic (Pipeline):**
   1.  **Rule Check:** 블랙리스트/화이트리스트 메모리 캐시 조회 (0.01ms)
-  2.  **Vector Search:** 입력 URL 및 관련 키워드를 **임베딩(Embedding)**하여 **Chroma DB**에서 유사한 최신 피싱 사례/보안 가이드 검색
+  2.  **Vector Search:** 입력 URL 및 관련 키워드를 **임베딩(Embedding)** 하여 **Chroma DB**에서 유사한 최신 피싱 사례/보안 가이드 검색
   3.  **LLM Reasoning:** 검색된 Context(지식)와 URL 구조 정보를 결합하여 Gemini Pro 모델에 전송
 - **Output:**
   - Risk Level (`SAFE`, `DANGEROUS`, `SUSPICIOUS`)
@@ -93,7 +93,7 @@ graph LR
   - `isLoggedIn` (Boolean): 권한 확인용 플래그
 - **Internal Logic (Pipeline):**
   1.  **Intent Classification:** 사용자의 발화가 단순 질문인지, 행동(Action) 요청인지 파악
-  2.  **Context Retrieval:** 단순 질문일 경우 **Chroma DB**에서 '서비스 이용 가이드' 벡터 검색 (Static RAG)
+  2.  **Context Retrieval:** 단순 질문일 경우 **Chroma DB** 에서 '서비스 이용 가이드' 벡터 검색 (Static RAG)
   3.  **Function Calling:** 행동 요청일 경우(예: "글 삭제해줘"), `deletePostById` 등 Java 메소드 매핑 및 실행
 - **Output:**
   - AI의 답변 (Function 실행 결과가 포함된 자연어)
