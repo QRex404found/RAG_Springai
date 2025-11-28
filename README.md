@@ -1,11 +1,5 @@
 # 🎓 QRex RAG Server: AI-Based Phishing Detection System
 
-> **Project QRex (404 FOUND Team)**
-> **충북대학교 소프트웨어학부 2025 프로젝트**
-> 개발자: 김여민 (Backend & AI Engineering)
-
----
-
 ## 📖 1. 프로젝트 개요 (Overview)
 
 **QRex RAG Server**는 지능화되는 QR싱(Qhishing) 및 URL 피싱 위협에 대응하기 위해 설계된 **AI 전용 백엔드 서버**입니다.
