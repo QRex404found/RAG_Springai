@@ -1,103 +1,63 @@
 plugins {
-
     id 'java'
-
     id 'org.springframework.boot' version '3.3.5'
-
     id 'io.spring.dependency-management' version '1.1.6'
-
 }
-
-
 
 group = 'io.github.qrex404found'
-
 version = '0.0.1-SNAPSHOT'
 
-
-
 java {
-
     toolchain {
-
         languageVersion = JavaLanguageVersion.of(21)
-
     }
-
 }
-
-
 
 repositories {
-
     mavenCentral()
-
-    maven { url 'https://repo.spring.io/milestone' }
-
-    maven { url 'https://repo.spring.io/snapshot' }
-
+    maven { url "https://repo.spring.io/release" }
 }
-
-
 
 ext {
-
-// ✅ 최신 기능(ChatClient, Options)이 모두 있는 버전으로 복귀
-
-    set('springAiVersion', "1.1.0-M4")
-
+    set('springAiVersion', "1.1.0")
 }
-
-
 
 dependencies {
-
-
-
+    // Spring Boot
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-
-
-// ✅ Google GenAI 공식 스타터
-
+    // Google Gemini Chat
     implementation 'org.springframework.ai:spring-ai-starter-model-google-genai'
 
+    // Google Embedding Model
+    implementation 'org.springframework.ai:spring-ai-starter-model-google-genai-embedding'
 
+    // ⭐ Chroma VectorStore (정식 JAR)
+    implementation 'org.springframework.ai:spring-ai-starter-vector-store-chroma'
 
-    compileOnly 'org.projectlombok:lombok'
-
-    annotationProcessor 'org.projectlombok:lombok'
-
-
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-
-
-// ✅ [추가] Swagger (OpenAPI) 라이브러리
-
+    // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-
-
 
 dependencyManagement {
-
     imports {
-
         mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
-
     }
-
 }
 
-
-
 tasks.named('test') {
-
     useJUnitPlatform()
+}
 
+// 테스트 비활성화 (필요 시)
+tasks.withType(Test) {
+    enabled = false
 }

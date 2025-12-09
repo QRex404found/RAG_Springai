@@ -33,7 +33,7 @@ public class AgentTools {
     @Bean
     @Description("QRex 사용법 안내")
     public Function<String, String> searchUserGuide() {
-        return q -> "QRex 이용 가이드:\n" + knowledgeBaseService.getKnowledgeAsText();
+        return query -> "QRex 이용 가이드 검색 결과:\n" + knowledgeBaseService.searchSimilarDocuments(query);
     }
 
     // 2. 게시글 검색
@@ -42,7 +42,12 @@ public class AgentTools {
     public Function<String, String> searchCommunityPosts() {
         return keyword -> {
             try {
-                return restClient.get().uri(u -> u.path("/api/posts/search").queryParam("keyword", keyword).build()).retrieve().body(String.class);
+                return restClient.get()
+                        .uri(u -> u.path("/api/posts/search")
+                                .queryParam("keyword", keyword)
+                                .build())
+                        .retrieve()
+                        .body(String.class);
             } catch (Exception e) { return "검색 실패: " + e.getMessage(); }
         };
     }
@@ -72,8 +77,16 @@ public class AgentTools {
                 body.put("content", content);
                 body.put("writerId", req.writerId());
                 body.put("url", url);
-                return restClient.post().uri("/api/posts").contentType(MediaType.APPLICATION_JSON).body(body).retrieve().body(String.class);
-            } catch (Exception e) { return "작성 실패: " + e.getMessage(); }
+                return restClient.post()
+                        .uri("/api/posts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(body)
+                        .retrieve()
+                        .body(String.class);
+
+            } catch (Exception e) {
+                return "작성 실패: " + e.getMessage();
+            }
         };
     }
 
@@ -85,6 +98,7 @@ public class AgentTools {
             try {
                 System.out.println("🔍 [AgentTools] 내 글 목록 조회 시도: User=" + userId);
 
+                // 현재 엔드포인트 사용: /api/posts/myPostsByTitle?title=&requesterId={userId}
                 String jsonResponse = restClient.get()
                         .uri(uriBuilder -> uriBuilder
                                 .path("/api/posts/myPostsByTitle")
@@ -98,12 +112,12 @@ public class AgentTools {
 
                 List<Map<String, Object>> posts = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
 
-                // 🔥 [디버깅] 첫 번째 데이터의 키 목록 확인 (boardId가 있는지 확인용)
+                // 🔥 [디버깅] 첫 번째 데이터의 키 목록 확인 (JSON에 실제로 어떤 키가 있는지 확인)
                 if (!posts.isEmpty()) {
-                    System.out.println("🔍 [Key Check] 첫 번째 데이터 키 목록: " + posts.get(0).keySet());
+                    System.out.println("🔥 [Key Check] 첫 번째 데이터 키 목록: " + posts.get(0).keySet());
                 }
 
-                // 정렬
+                // 정렬 (최신순)
                 posts.sort((a, b) -> {
                     long idA = parseIdSafely(a);
                     long idB = parseIdSafely(b);
@@ -139,47 +153,115 @@ public class AgentTools {
     public Function<FindMyPostsRequest, String> findMyPostsByTitle() {
         return req -> {
             try {
-                String json = restClient.get().uri(u -> u.path("/api/posts/myPostsByTitle").queryParam("title", req.title()).queryParam("requesterId", req.requesterId()).queryParam("exact", true).build()).retrieve().body(String.class);
-                List<Map<String, Object>> posts = objectMapper.readValue(json, new TypeReference<>() {});
+                String json = restClient.get()
+                        .uri(u -> u.path("/api/posts/myPostsByTitle")
+                                .queryParam("title", req.title())
+                                .queryParam("requesterId", req.requesterId())
+                                .queryParam("exact", true)
+                                .build())
+                        .retrieve()
+                        .body(String.class);
+
+                List<Map<String, Object>> posts = objectMapper.readValue(json, new TypeReference<>(){});
                 posts.sort((a, b) -> Long.compare(parseIdSafely(b), parseIdSafely(a)));
                 return objectMapper.writeValueAsString(posts);
             } catch (Exception e) { return "[]"; }
         };
     }
 
+    // ---------------- 게시글 삭제 ----------------
+
     public record DeletePostByIdRequest(Integer postId, String requesterId) {}
     @Bean
+    @Description("게시글 ID 기반 삭제")
     public Function<DeletePostByIdRequest, String> deletePostById() {
         return req -> {
             try {
                 Map<String, Object> body = new HashMap<>();
                 body.put("postId", req.postId());
                 body.put("requesterId", req.requesterId());
-                return restClient.post().uri("/api/posts/deleteById").contentType(MediaType.APPLICATION_JSON).body(body).retrieve().body(String.class);
-            } catch (Exception e) { return "삭제 실패"; }
+
+                return restClient.post()
+                        .uri("/api/posts/deleteById")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(body)
+                        .retrieve()
+                        .body(String.class);
+
+            } catch (Exception e) {
+                return "삭제 실패 "+e.getMessage();
+            }
         };
     }
 
+    // ---------------- AI 분석기록 조회 ----------------
+
     @Bean
+    @Description("분석 기록 조회")
     public Function<String, String> getAnalysisHistory() {
         return userId -> {
             try {
-                return restClient.get().uri(u -> u.path("/api/analysis/ai/history").queryParam("writerId", userId).build()).retrieve().body(String.class);
-            } catch (Exception e) { return "[]"; }
+                return restClient.get()
+                        .uri(u -> u.path("/api/analysis/ai/history")
+                                .queryParam("writerId", userId)
+                                .build())
+                        .retrieve()
+                        .body(String.class);
+
+            } catch (Exception e) { return "[]";}
         };
     }
 
-    public record UpdateAnalysisTitleRequest(String analysisId, String newTitle) {}
+    // **** 중요: 수정된 DTO (userId 포함) ****
+    public record UpdateAnalysisTitleRequest(
+            String analysisId,
+            String newTitle,
+            String userId // 👈 AgentController에서 전달하는 userId 필드
+    ) {}
+
     @Bean
+    @Description("분석 기록 제목 수정 (PATCH 고정)")
     public Function<UpdateAnalysisTitleRequest, String> updateAnalysisTitle() {
         return req -> {
             try {
+                System.out.println("🔍 [updateAnalysisTitle] 호출됨");
+                System.out.println("    - analysisId = " + req.analysisId());
+                System.out.println("    - newTitle   = " + req.newTitle());
+                System.out.println("    - userId     = " + req.userId());
+
                 Map<String, String> body = new HashMap<>();
                 body.put("analysisId", req.analysisId());
                 body.put("newTitle", req.newTitle());
-                restClient.patch().uri("/api/analysis/ai/title").contentType(MediaType.APPLICATION_JSON).body(body).retrieve().toBodilessEntity();
+                body.put("userId", req.userId());
+
+                System.out.println("📦 [updateAnalysisTitle] 전송 body = " + body);
+
+                var responseEntity = restClient.patch()
+                        .uri("/api/analysis/ai/title")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(body)
+                        .retrieve()
+                        .toBodilessEntity(); // HTTP 2xx 상태만 확인
+
+                System.out.println("✅ [updateAnalysisTitle] 응답 status = " + responseEntity.getStatusCode());
+
                 return "성공";
-            } catch (Exception e) { return "실패"; }
+
+            } catch (Exception e) {
+                System.err.println("❌ [updateAnalysisTitle] 요청 실패");
+                // HTTP 4xx/5xx면 여기로 들어옴
+                if (e instanceof org.springframework.web.client.HttpClientErrorException httpEx) {
+                    System.err.println("    - status = " + httpEx.getStatusCode());
+                    System.err.println("    - responseBody = " + httpEx.getResponseBodyAsString());
+                } else if (e instanceof org.springframework.web.client.HttpServerErrorException httpEx) {
+                    System.err.println("    [5xx] status = " + httpEx.getStatusCode());
+                    System.err.println("    [5xx] responseBody = " + httpEx.getResponseBodyAsString());
+                } else {
+                    System.err.println("    - message = " + e.getMessage());
+                }
+                e.printStackTrace();
+                return "실패: " + e.getMessage();
+            }
         };
     }
 }

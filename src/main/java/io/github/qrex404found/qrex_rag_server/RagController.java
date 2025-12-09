@@ -201,7 +201,7 @@ IP 위치: %s
 
 // 2. 프롬프트 완성
 
-        String contextText = this.knowledgeBaseService.getKnowledgeAsText();
+        String contextText = this.knowledgeBaseService.searchSimilarDocuments(question);
 
         String safeContextText = contextText.replace("%", "퍼센트");
 
